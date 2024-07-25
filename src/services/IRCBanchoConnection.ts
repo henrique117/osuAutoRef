@@ -4,11 +4,9 @@ import IRCConfigInterface from '../interfaces/IRCConfig.interface'
 class IRCConnectionService {
     protected client: irc.Client
 
-    constructor(
-        private config: IRCConfigInterface,
-    ) {
+    constructor(private config: IRCConfigInterface,) {
         this.client = new irc.Client(config.server, config.username, {
-            channels: ['Simabuco'],
+            channels: [],
             password: config.password,
             retryCount: 5,
             retryDelay: 5000,

@@ -1,38 +1,30 @@
-import * as fs from 'fs'
+import * as fs from 'fs';
 
 class TXTProviderService {
-    private regex = /^[a-zA-Z0-9]+\n\d+$/
-    private txt: string | null = null
+    private regex = /^[a-zA-Z0-9]+(\r?\n)[a-zA-Z0-9]+(\r?\n)[a-zA-Z0-9]+(\r?\n)\d+(\r?\n)(0|1)(\r?\n)([0-9\s]+)(\r?\n)(0|1)$/;
+    private txtContentVerified: string = '';
 
-    constructor() {
-        this.loadTXT()
-    }
-
-    private async loadTXT() {
-        let text: string | null = null
+    constructor(private txt: string) {
         try {
-            const data = await fs.promises.readFile('config.txt', 'utf8');
-            text = data.trim()
-            const verify = await this.verifyTXT(text)
+            const txtContent: string = fs.readFileSync(`${txt}.txt`, 'utf8');
 
-            if(verify == false) return null
-        } catch (e) {
-            console.error('Erro ao ler arquivo: ', e)
+            if (!this.verify(txtContent)) {
+                console.error(`The file "${txt}.txt" is not in the correct format`);
+            } else {
+                this.txtContentVerified = txtContent;
+            }
+        } catch (error) {
+            console.error(`Error reading the file`);
         }
-
-        return text
     }
 
-    public async verifyTXT(text: string | null): Promise<boolean> {
-        if(text === null) return false
-        return this.regex.test(text)
+    public verify(txtToVerify: string): boolean {
+        return this.regex.test(txtToVerify);
     }
 
-    public async readTxt(): Promise<string | null> {
-        console.log(this.loadTXT)
-        if(await this.loadTXT() === null) return 'O arquivo de texto está em um formato errado ou é inexistente'
-        return this.txt!
+    public provideStringVector(): string[] {
+        return this.txtContentVerified.split(/\r?\n/);
     }
 }
 
-export default TXTProviderService
+export default TXTProviderService;
