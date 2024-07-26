@@ -6,7 +6,7 @@ class TXTProviderService {
 
     constructor(private txt: string) {
         try {
-            const txtContent: string = fs.readFileSync(`${txt}.txt`, 'utf8');
+            const txtContent: string = fs.readFileSync(`${txt}.txt`, 'utf-8');
 
             if (!this.verify(txtContent)) {
                 console.error(`The file "${txt}.txt" is not in the correct format`);
